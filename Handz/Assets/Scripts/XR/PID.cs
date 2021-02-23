@@ -18,7 +18,7 @@ public class PID : MonoBehaviour
 
     public Transform target;
     public Rigidbody rb;
-    public Rigidbody lrb;
+    public HandzRigTwo rig;
 
     public Vector3 torque;
     public Vector3 force;
@@ -48,7 +48,7 @@ public class PID : MonoBehaviour
         rb.AddForce(force);
         rb.AddTorque(torque);
 
-        lrb.AddForce(-force / climbForceAmount);
+        rig.characterController.Move(-force / climbForceAmount);
     }
 
     public void HandlePID()

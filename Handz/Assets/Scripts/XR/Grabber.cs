@@ -11,6 +11,8 @@ public class Grabber : MonoBehaviour
 
     public Collider palm;
 
+    public GameObject[] colliders;
+
     public Transform anchor;
 
     public float grabRadius;
@@ -21,21 +23,45 @@ public class Grabber : MonoBehaviour
         foreach (var hitCollider in hitColliders)
         {
             currentObject = hitCollider.gameObject;
-            if (input.grip.active)
-            {
-                GrabLogic();
-            }
+            GrabLogic();
         }
     }
 
     void GrabLogic()
     {
-        transform.position = palm.ClosestPoint(transform.position);
-        
-        gameObject.AddComponent<FixedJoint>();
-        if (currentObject.GetComponent<Rigidbody>())
+        if (input.grip.active && currentObject != gameObject)
         {
-            gameObject.GetComponent<FixedJoint>().connectedBody = currentObject.GetComponent<Rigidbody>();
+            foreach (var col in colliders)
+            {
+                col.SetActive(false);
+            }
+            
+            //transform.position = palm.ClosestPoint(currentObject.transform.position);
+
+            if (!GetComponent<FixedJoint>())
+            {
+                gameObject.AddComponent<FixedJoint>();
+            }
+            if (currentObject.GetComponent<Rigidbody>())
+            {
+                gameObject.GetComponent<FixedJoint>().connectedBody = currentObject.GetComponent<Rigidbody>();
+            }
         }
+
+        if (!input.grip.active)
+        {
+            if (GetComponent<FixedJoint>())
+            {
+                Destroy(gameObject.GetComponent<FixedJoint>());
+            }
+            transform.position = transform.position;
+
+            foreach (var col in colliders)
+            {
+                col.SetActive(true);
+            }
+        }
+
+
     }
 }

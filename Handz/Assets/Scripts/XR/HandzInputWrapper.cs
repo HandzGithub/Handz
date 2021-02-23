@@ -21,8 +21,7 @@ public class HandzInputWrapper : MonoBehaviour
 
     public bool debugMode;
 
-    public bool isLeft;
-    public bool isRight;
+    public InputDeviceCharacteristics characteristics;
 
     public Vector2 joystick;
 
@@ -40,26 +39,22 @@ public class HandzInputWrapper : MonoBehaviour
         handz = this;
 
         List<InputDevice> devices = new List<InputDevice>();
-        InputDevices.GetDevices(devices);
+        InputDevices.GetDevicesWithCharacteristics(characteristics, devices);
 
         foreach (var device in devices)
         {
             Debug.Log(device.name + device.characteristics);
-
-            if (device.characteristics == InputDeviceCharacteristics.Left && isLeft)
-            {
-                targetDevice = device;
-            }
-
-            if (device.characteristics == InputDeviceCharacteristics.Right && isRight)
-            {
-                targetDevice = device;
-            }
+            targetDevice = device;
         }
     }
 
     void Update()
     {
+        if (debugMode)
+        {
+            //joystick = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
+        }
+        
         if (!debugMode)
         {
             targetDevice.TryGetFeatureValue(CommonUsages.primary2DAxis, out joystick);
